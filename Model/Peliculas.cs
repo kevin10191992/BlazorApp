@@ -8,5 +8,6 @@ namespace BlazorApp1.Model
         public string Titulo { get; set; }
         public string Director { get; set; }
         public DateTime? Fecha { get; set; }
+
     }
 }

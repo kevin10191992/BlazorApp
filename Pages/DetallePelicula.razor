@@ -1,0 +1,48 @@
+﻿@page "/detalle"
+@using Model
+@using Services
+@inject IPeliculasService _PeliculasService
+<h3>Detalle Pelicula</h3>
+<div class="container">
+    <EditForm Model="@pelicula">
+        <form>
+            <div class="form-row">
+                <div class="form-group col">
+                    <input type="text" class="form-control" @bind="pelicula.Titulo" placeholder="Titulo de la Pelicula">
+                </div>
+                <div class="form-group col">
+                    <input type="text" class="form-control" @bind="pelicula.Director" placeholder="Director">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col">
+                    <input  type="date" class="form-control" @bind="pelicula.Fecha" placeholder="Fecha y hora Lanzamiento">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col">
+                    <button type="submit" class="btn btn-primary" @onclick="GuardarPelicula">Guardar Pelicula</button>
+                </div>
+                <div class="form-group col">
+                    <button type="button" class="btn btn-dark" @onclick="Cancelar">Cancelar</button>
+                </div>
+            </div>
+        </form>
+    </EditForm>
+</div>
+
+
+@code {
+    private Peliculas pelicula = new Peliculas();
+
+    protected void Cancelar()
+    {
+
+
+    }
+
+    protected async Task GuardarPelicula()
+    {
+        await _PeliculasService.Save(pelicula);
+    }
+}
