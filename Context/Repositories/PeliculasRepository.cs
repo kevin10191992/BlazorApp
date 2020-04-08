@@ -15,10 +15,10 @@ namespace BlazorApp1.Context.Repositories
     public interface IPeliculasRepository
     {
         Task<IEnumerable<Peliculas>> GetAll();
-        Task<IEnumerable<Peliculas>> GetDetail(int id);
+        Task<Peliculas> GetDetail(int id);
         Task<bool> Insert(Peliculas pelicula);
         Task<bool> Update(Peliculas pelicula);
-        Task<bool> Delete(Peliculas pelicula);
+        Task<bool> Delete(int id);
 
     }
     #endregion Interfaz
@@ -43,19 +43,28 @@ namespace BlazorApp1.Context.Repositories
             return new SqlConnection(_configuration.GetConnectionString("Contexto"));
 
         }
-        public Task<bool> Delete(Peliculas pelicula)
+        public async Task<bool> Delete(int id)
         {
-            throw new NotImplementedException();
+            var Db = ConexionDB();
+            var sql = @" delete FROM Peliculas where PeliculasId=@PeliculasId";
+            var result = await Db.ExecuteAsync(sql.ToString(), new { PeliculasId = id });
+            return (result > 0);
         }
 
-        public Task<IEnumerable<Peliculas>> GetAll()
+        public async Task<IEnumerable<Peliculas>> GetAll()
         {
-            throw new NotImplementedException();
+            var Db = ConexionDB();
+            var sql = @" SELECT * FROM Peliculas";
+
+            return await Db.QueryAsync<Peliculas>(sql.ToString());
         }
 
-        public Task<IEnumerable<Peliculas>> GetDetail(int id)
+        public async Task<Peliculas> GetDetail(int id)
         {
-            throw new NotImplementedException();
+            var Db = ConexionDB();
+            var sql = @" SELECT * FROM Peliculas where PeliculasId=@PeliculasId";
+
+            return await Db.QueryFirstOrDefaultAsync<Peliculas>(sql.ToString(), new { PeliculasId = id });
         }
 
         public async Task<bool> Insert(Peliculas pelicula)
@@ -71,9 +80,21 @@ namespace BlazorApp1.Context.Repositories
             return (result > 0);
         }
 
-        public Task<bool> Update(Peliculas pelicula)
+        public async Task<bool> Update(Peliculas pelicula)
         {
-            throw new NotImplementedException();
+            var Db = ConexionDB();
+            var sql = @" update Peliculas 
+                                set Titulo=@Titulo ,Director=@Director ,Fecha=@Fecha 
+                                    where PeliculasId=@PeliculasId";
+
+            var result = await Db.ExecuteAsync(sql.ToString(), new
+            {
+                pelicula.Titulo,
+                pelicula.Director,
+                pelicula.Fecha,
+                pelicula.PeliculasId
+            });
+            return (result > 0);
         }
     }
 }

@@ -1,0 +1,81 @@
+﻿@page "/lista"
+@using Model
+@using Services
+@inject IPeliculasService _PeliculasService
+@inject NavigationManager _NavigationManager
+@inject IJSRuntime JsRuntime
+<h3>Detalle Pelicula</h3>
+<div class="container">
+
+    @if (lista == null)
+    {
+        <div>Cargando...</div>
+    }
+    else
+    {
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    <th scope="col">Id</th>
+                    <th scope="col">Titulo</th>
+                    <th scope="col">Director</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in lista)
+                {
+                    <tr>
+                        <th scope="row">@item.PeliculasId</th>
+                        <td>@item.Titulo</td>
+                        <td>@item.Director</td>
+                        <td>@item.Fecha</td>
+                        <td> <a href="/detalle/@item.PeliculasId">Edit</a> </td>
+                        <td> <a href="/@RUTAS.RUTA_LISTA" @onclick="@(a=> eliminar(@item.PeliculasId))">Delete</a>  </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+    }
+
+
+</div>
+
+
+@code {
+    private IEnumerable<Peliculas>
+    lista;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            lista = await _PeliculasService.GetAll();
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
+    protected async Task eliminar(int id)
+    {
+
+        if (await JsRuntime.InvokeAsync<bool>("confirm", "¿Esta seguro?"))
+        {
+
+
+            if (await _PeliculasService.Delete(id))
+            {
+                lista = lista.Where(a => a.PeliculasId != id);//se hace query con todos menos el del id
+            }
+
+        }
+    }
+
+
+}

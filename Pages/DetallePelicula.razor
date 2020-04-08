@@ -1,7 +1,9 @@
 ﻿@page "/detalle"
+@page "/detalle/{id:int}"
 @using Model
 @using Services
 @inject IPeliculasService _PeliculasService
+@inject NavigationManager _NavigationManager
 <h3>Detalle Pelicula</h3>
 <div class="container">
     <EditForm Model="@pelicula">
@@ -16,7 +18,7 @@
             </div>
             <div class="form-row">
                 <div class="form-group col">
-                    <input  type="date" class="form-control" @bind="pelicula.Fecha" placeholder="Fecha y hora Lanzamiento">
+                    <input type="date" class="form-control" @bind="pelicula.Fecha" placeholder="Fecha y hora Lanzamiento">
                 </div>
             </div>
             <div class="form-row">
@@ -33,16 +35,30 @@
 
 
 @code {
+    [Parameter]
+    public int id { get; set; }
+
     private Peliculas pelicula = new Peliculas();
 
     protected void Cancelar()
     {
-
-
+        _NavigationManager.NavigateTo(RUTAS.RUTA_LISTA);
     }
 
     protected async Task GuardarPelicula()
     {
         await _PeliculasService.Save(pelicula);
+        _NavigationManager.NavigateTo(RUTAS.RUTA_LISTA);
     }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (id > 0)
+        {
+            pelicula = await _PeliculasService.GetDetail(id);
+        }
+
+
+    }
+
 }

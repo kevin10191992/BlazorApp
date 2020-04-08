@@ -12,8 +12,9 @@ namespace BlazorApp1.Services
     public interface IPeliculasService
     {
         Task<IEnumerable<Peliculas>> GetAll();
-        Task<IEnumerable<Peliculas>> GetDetail(int id);
+        Task<Peliculas> GetDetail(int id);
         Task<bool> Save(Peliculas pelicula);
+        Task<bool> Delete(int id);
     }
     #endregion interfaz
     /// <summary>
@@ -22,20 +23,18 @@ namespace BlazorApp1.Services
     public class PeliculasService : IPeliculasService
     {
         private IPeliculasRepository _PeliculasRepository;
-        private readonly IConfiguration _configuration;
-        public PeliculasService(IConfiguration configuration, IPeliculasRepository peliculasRepository)
+        public PeliculasService(IPeliculasRepository peliculasRepository)
         {
-            _configuration = configuration;
             _PeliculasRepository = peliculasRepository;
         }
-        public Task<IEnumerable<Peliculas>> GetAll()
+        public async Task<IEnumerable<Peliculas>> GetAll()
         {
-            throw new NotImplementedException();
+            return await _PeliculasRepository.GetAll();
         }
 
-        public Task<IEnumerable<Peliculas>> GetDetail(int id)
+        public async Task<Peliculas> GetDetail(int id)
         {
-            throw new NotImplementedException();
+            return await _PeliculasRepository.GetDetail(id);
         }
 
         public async Task<bool> Save(Peliculas pelicula)
@@ -44,7 +43,12 @@ namespace BlazorApp1.Services
             {
                 return await _PeliculasRepository.Insert(pelicula);
             }
-            else return false;
+            else return await _PeliculasRepository.Update(pelicula);
+        }
+
+        public async Task<bool> Delete(int id)
+        {
+            return await _PeliculasRepository.Delete(id);
         }
     }
 }
